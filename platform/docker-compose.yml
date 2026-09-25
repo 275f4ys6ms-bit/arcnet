@@ -1,37 +1,36 @@
 services:
   postgres:
     image: pgvector/pgvector:pg16
+    network_mode: host
     environment:
       POSTGRES_DB: ${POSTGRES_DB:-arcnet}
       POSTGRES_USER: ${POSTGRES_USER:-arcnet}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-arcnet}
-    ports:
-      - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
       - ./db/schema.sql:/docker-entrypoint-initdb.d/01-schema.sql:ro
       - ./db/migration_002.sql:/docker-entrypoint-initdb.d/02-migration.sql:ro
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-arcnet} -d ${POSTGRES_DB:-arcnet}"]
+      test: ["CMD-SHELL", "pg_isready -h 127.0.0.1 -U ${POSTGRES_USER:-arcnet} -d ${POSTGRES_DB:-arcnet}"]
       interval: 5s
       timeout: 5s
       retries: 10
   redis:
     image: redis:7-alpine
-    ports:
-      - "6379:6379"
+    network_mode: host
     volumes:
       - redis_data:/data
     healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
+      test: ["CMD", "redis-cli", "-h", "127.0.0.1", "ping"]
       interval: 5s
       timeout: 3s
       retries: 10
   ingestor:
     build: ./services/ingestor
+    network_mode: host
     environment:
-      DATABASE_URL: ${DATABASE_URL:-postgresql://arcnet:arcnet@postgres:5432/arcnet}
-      REDIS_URL: ${REDIS_URL:-redis://redis:6379/0}
+      DATABASE_URL: ${DATABASE_URL:-postgresql://arcnet:arcnet@127.0.0.1:5432/arcnet}
+      REDIS_URL: ${REDIS_URL:-redis://127.0.0.1:6379/0}
       OPENAI_API_KEY: ${OPENAI_API_KEY:-}
       OPENAI_EMBEDDING_MODEL: ${OPENAI_EMBEDDING_MODEL:-text-embedding-3-small}
     depends_on:
@@ -41,9 +40,10 @@ services:
         condition: service_healthy
   tutor:
     build: ./services/tutor
+    network_mode: host
     environment:
-      DATABASE_URL: ${DATABASE_URL:-postgresql://arcnet:arcnet@postgres:5432/arcnet}
-      REDIS_URL: ${REDIS_URL:-redis://redis:6379/0}
+      DATABASE_URL: ${DATABASE_URL:-postgresql://arcnet:arcnet@127.0.0.1:5432/arcnet}
+      REDIS_URL: ${REDIS_URL:-redis://127.0.0.1:6379/0}
       OPENAI_API_KEY: ${OPENAI_API_KEY:-}
       OPENAI_CHAT_MODEL: ${OPENAI_CHAT_MODEL:-gpt-4o-mini}
       OPENAI_EMBEDDING_MODEL: ${OPENAI_EMBEDDING_MODEL:-text-embedding-3-small}
@@ -52,8 +52,6 @@ services:
       CLOUDFLARE_API_TOKEN: ${CLOUDFLARE_API_TOKEN:-}
       CLOUDFLARE_CUSTOMER_CODE: ${CLOUDFLARE_CUSTOMER_CODE:-}
       STREAM_WEBHOOK_TOKEN: ${STREAM_WEBHOOK_TOKEN:-}
-    ports:
-      - "8000:8000"
     depends_on:
       postgres:
         condition: service_healthy
