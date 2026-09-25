@@ -1,0 +1,19 @@
+services:
+  - type: web
+    name: tutor-voice-agent
+    runtime: python
+    plan: free
+    buildCommand: pip install -r requirements-agent.txt
+    startCommand: bash start.sh
+    healthCheckPath: /api/config
+    envVars:
+      - key: LIVEKIT_URL
+        sync: false
+      - key: LIVEKIT_API_KEY
+        sync: false
+      - key: LIVEKIT_API_SECRET
+        sync: false
+      - key: OPENAI_API_KEY
+        sync: false
+      - key: CANVAS_WS
+        sync: false

@@ -1,0 +1,14 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Upload lesson</title></head>
+<body><main><h1>Upload a new lesson</h1><form id="form"><label>Title <input name="title" required></label><label>Video <input name="file" type="file" accept="video/*" required></label><button>Upload</button></form><p id="status"></p></main>
+<script>
+document.querySelector("#form").addEventListener("submit", async event => {
+  event.preventDefault(); const form = new FormData(event.target); const status = document.querySelector("#status");
+  const lesson = await fetch("/v1/videos", {method: "POST", headers: {"Content-Type": "application/json"}, body: JSON.stringify({title: form.get("title")})}).then(response => response.json());
+  const ticket = await fetch(`/v1/videos/${lesson.video_id}/upload-url`, {method: "POST"}).then(response => response.json());
+  const upload = new FormData(); upload.append("file", form.get("file"));
+  const response = await fetch(ticket.upload_url, {method: "POST", body: upload});
+  status.textContent = response.ok ? "Upload received. Processing..." : "Upload failed";
+});
+</script></body></html>

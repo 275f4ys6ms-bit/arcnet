@@ -1,0 +1,7 @@
+fastapi>=0.110
+uvicorn[standard]>=0.29
+websockets>=12
+livekit-agents>=0.12
+livekit-plugins-openai>=0.10
+livekit-plugins-silero>=0.10
+livekit-api>=0.7

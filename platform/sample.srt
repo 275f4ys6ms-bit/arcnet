@@ -1,0 +1,15 @@
+1
+00:00:00,000 --> 00:01:15,000
+Today we are learning how to cook rice. Start by measuring one cup of rice.
+
+2
+00:01:15,000 --> 00:02:30,000
+Rinse the rice under cool water until the water is mostly clear. Rinsing removes loose starch from the surface, which helps keep the cooked grains from becoming gummy.
+
+3
+00:02:30,000 --> 00:03:45,000
+Add one and a half cups of water, then bring the pot to a gentle boil. Once it boils, cover the pot and reduce the heat to low.
+
+4
+00:03:45,000 --> 00:05:00,000
+Cook for fifteen minutes without lifting the lid. Turn off the heat and let the rice rest for ten minutes. Fluff it with a fork before serving.

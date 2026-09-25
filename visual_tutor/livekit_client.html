@@ -1,0 +1,14 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><title>LiveKit tutor</title></head>
+<body><p id="status">LiveKit client ready. Use /api/token to join a room.</p>
+<script src="https://cdn.jsdelivr.net/npm/livekit-client/dist/livekit-client.umd.min.js"></script>
+<script>
+async function join(){
+  const config=await (await fetch("/api/config")).json();
+  const token=await (await fetch("/api/token?room=tutor-demo")).json();
+  if(!config.livekit_url||!token.token){document.getElementById("status").textContent="LiveKit credentials are not configured.";return}
+  const room=new LivekitClient.Room(); await room.connect(config.livekit_url,token.token); await room.localParticipant.setMicrophoneEnabled(true);
+  document.getElementById("status").textContent="connected";
+}
+join().catch(error=>document.getElementById("status").textContent=`LiveKit error: ${error}`);
+</script></body></html>

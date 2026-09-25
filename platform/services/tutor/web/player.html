@@ -1,0 +1,11 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Video Tutor</title></head>
+<body><main><h1>Video Tutor</h1><video id="player" controls playsinline></video><p id="status">Loading lesson...</p></main>
+<script>
+const videoId = "{{VIDEO_ID}}";
+fetch(`/v1/videos/${videoId}/player-info`).then(response => response.json()).then(info => {
+  document.querySelector("#status").textContent = info.title || "Lesson";
+  if (info.playback_url) document.querySelector("#player").src = info.playback_url;
+}).catch(() => { document.querySelector("#status").textContent = "Lesson unavailable"; });
+</script></body></html>
